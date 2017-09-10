@@ -42,7 +42,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Marker currentLocationMarker;
     public static final int REQUEST_LOCATION_CODE = 99;
     int PROXIMITY_RADIUS = 10000;
-    double latitude, longtitude;
+    double latitude, longtitude, end_latitude, end_longitude;
 
 
     @Override
@@ -168,8 +168,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Toast.makeText(MapsActivity.this, "showing nearby school", Toast.LENGTH_LONG).show();
                 break;
 
+            case R.id.B_to:
+                dataTransfer = new Object[2];
+                url = getDirectionsUrl();
+                GetDirectionsData getDirectionsData = new GetDirectionsData();
+                dataTransfer[0] = mMap;
+                dataTransfer[1] = url;
+                dataTransfer[2] = new LatLng(end_latitude, end_longitude);
+
+                getDirectionsData.execute(dataTransfer);
+                break;
         }
 
+    }
+
+    private String getDirectionsUrl() {
+        StringBuilder googleDirectionsUrl = new StringBuilder("https://maps.googleapis.com/maps/api/directions/json?");
+        googleDirectionsUrl.append("origin=" + latitude + "," + longtitude);
+        googleDirectionsUrl.append("&destination=" + end_latitude + "," + end_longitude);
+        googleDirectionsUrl.append("&key=" + "AIzaSyDQTtmWhabPZkp0QdaE4sdRixd9POJftJs");
+
+        return googleDirectionsUrl.toString();
     }
 
     private String getUrl(double latitude, double longtitude, String nearbyPlace) {

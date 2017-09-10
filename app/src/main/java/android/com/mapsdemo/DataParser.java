@@ -1,5 +1,7 @@
 package android.com.mapsdemo;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,6 +15,23 @@ import java.util.List;
  */
 
 public class DataParser {
+
+    private HashMap<String, String> getDuration(JSONArray googleDirectionsJson) {
+        HashMap<String, String> googleDirectionsMap = new HashMap<>();
+        String duration = "";
+        String distance = "";
+
+        Log.d("JSON response", googleDirectionsJson.toString());
+        try {
+            duration = googleDirectionsJson.getJSONObject(0).getJSONObject("duration").getString("text");
+            distance = googleDirectionsJson.getJSONObject(0).getJSONObject("distance").getString("text");
+            googleDirectionsMap.put("duration", duration);
+            googleDirectionsMap.put("distance", distance);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return googleDirectionsMap;
+    }
 
     private HashMap<String, String> getPlace(JSONObject googlePlaceJson) {
 
@@ -83,6 +102,21 @@ public class DataParser {
             e.printStackTrace();
         }
         return getPlaces(jsonArray);
+    }
+
+    public HashMap<String, String> parseDirections(String jsonData) {
+
+        JSONArray jsonArray = null;
+        JSONObject jsonObject;
+
+        try {
+            jsonObject = new JSONObject(jsonData);
+            jsonArray = jsonObject.getJSONArray("routes").getJSONObject(0).getJSONArray("legs");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return getDuration(jsonArray);
     }
 
 
